@@ -3,9 +3,9 @@
         <div class="footer-inner">
             <div class="footer-item">
                 <div class="footer-text">
-                    &copy; Copyright <span id="footer-year">2020</span> | {{ data.website.title }}
+                    &copy; Copyright <span id="footer-year">2020</span> | {{ data.website.title | markdown_inline }}
                 </div>
-                <div class="footer-text pre-wrap">{{ data.website.address }}</div>
+                <div class="footer-text pre-wrap">{{ data.website.address | markdown_inline }}</div>
             </div>
             <div class="footer-item">
                 <div class="footer-text">

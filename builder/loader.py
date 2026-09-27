@@ -236,12 +236,26 @@ def is_empty_row(row):
     # Treat a row with no value in its first column as a blank/junk row.
     return not row or not str(row[0]).strip()
 
+# Website tab keys that support the [b]/[red]/... formatting shortcuts (see
+# apply_text_shortcuts), in addition to the Markdown these already get via
+# the 'markdown_inline' filter wherever they're rendered as visible text.
+# Background/URL keys (*_background, repo_url, map_iframe_src, root_folder,
+# data_url) are left out on purpose — they're never displayed as text.
+# 'title' is also used, unfiltered, in the <title> tag (base.html); that's
+# fine since it's still the plain source string there, markup and all just
+# don't do anything in a browser tab's title.
+WEBSITE_TEXT_SHORTCUT_KEYS = {'title', 'logo_text', 'subtitle', 'instruction', 'address'}
+
 def conv_website(table):
     items = {}
     for row in table:
         if is_empty_row(row):
             continue
-        items[row[0]] = row[1] if len(row) > 1 else ''
+        key = row[0]
+        value = row[1] if len(row) > 1 else ''
+        if key in WEBSITE_TEXT_SHORTCUT_KEYS:
+            value = apply_text_shortcuts(value)
+        items[key] = value
     return items
 
 def conv_announcements(table):

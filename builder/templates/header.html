@@ -5,7 +5,7 @@
                 <!-- <div class="logo-drawing-container">
                     <div class="logo-drawing" ref="logo"></div>
                 </div> -->
-                <div class="logo-text pre-wrap">{{ data.website.logo_text }}</div>
+                <div class="logo-text pre-wrap">{{ data.website.logo_text | markdown_inline }}</div>
             </div>
         </a>
         <button class="header-toggle" data-nav-toggle aria-label="Toggle menu" aria-expanded="false">

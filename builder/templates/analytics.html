@@ -1,0 +1,11 @@
+{#- Google Analytics, only when the Website tab has an 'analytics_id' row
+    (e.g. G-XXXXXXXXXX). Without it, no tracking script is loaded. -#}
+{% if data.website.analytics_id %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ data.website.analytics_id | urlencode }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', {{ data.website.analytics_id | tojson }});
+    </script>
+{% endif %}

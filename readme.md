@@ -1,93 +1,115 @@
-# Research Group Static Website
+# SCAPLab Website
 
-This is a static website for a research group, hosted as GitHub Pages.
+Source for the SCalable AI Platform Laboratory (SCAPLab) website, live at **https://scaplab.github.io/**.
 
-The website rebuilds itself from a Google Sheets document via a GitHub Actions job, so editing the spreadsheet is enough to update the site — trigger a rebuild with the **"🚀 Update Site" button inside the spreadsheet** (see below) and it's live in a couple of minutes, no 30-minute wait.
+![Builder](https://github.com/SCAPLab/scaplab.github.io/actions/workflows/builder.yml/badge.svg)
 
-![Builder](https://github.com/DiaSysLab/diasyslab.github.io/actions/workflows/builder.yml/badge.svg)
+Almost all of the site's content lives in a **Google Sheets document**. Edit the sheet, trigger a rebuild, and the site updates in a couple of minutes. You only need to touch this repo to change the layout or add static files.
 
-## How does this website work?
+## How it works
 
-The [Builder workflow](.github/workflows/builder.yml) runs the Python builder in *[builder](builder)*, which downloads the contents from Google Sheets and renders the static site into the *docs* folder **on the runner**. It then deploys that folder straight to GitHub Pages as an artifact — **nothing is committed back to the repository.**
-
-The workflow runs:
-- on every push to *master*,
-- manually via the **Run workflow** button on the [Actions](https://github.com/DiaSysLab/diasyslab.github.io/actions/workflows/builder.yml) page, or
-- from the spreadsheet itself, via the one-click button described in [Updating the site instantly from Google Sheets](#updating-the-site-instantly-from-google-sheets) — this is the normal way to publish a content edit, so you don't have to wait for a scheduled run (there isn't one).
-
-> The *docs* folder is a build artifact — it is regenerated on every run and you do **not** need to commit it. To update the site, edit the Google Sheets document, then trigger a rebuild (or push a code change).
-
-> The site footer used to show an "Edit Content" link straight to the Google Sheets document. That's been removed — the sheet URL is only kept as the `DATA_URL` secret now, not exposed on the public page.
-
-## How to upload static files to this website
-
-If you need to upload images or any other static files for use on the website, put them in the *[assets](assets)* folder. Everything there is copied into the built site's *assets* folder at build time.
-
-## How to create your own website from this
-
-1. Fork this repository to your account.
-
-1. Configure the repository to publish GitHub Pages using **GitHub Actions** as the source: *Settings → Pages → Build and deployment → Source → **GitHub Actions***. (This project deploys the built site as an artifact, so do **not** use "Deploy from a branch".)
-
-1. Configure a custom domain for your website if you need to. Read [this document](https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/configuring-a-custom-domain-for-your-github-pages-site) if you need help.
-
-1. Create a Google Sheets document for your contents and add its URL as the `DATA_URL` secret (see below).
-
-1. Get a Google API key and add it as the `API_KEY` secret (see below).
-
-1. Voilà! Once the workflow runs, your website is live on GitHub Pages.
-
-The spreadsheet URL and API key are read from the `DATA_URL` and `API_KEY` **repository secrets** (Settings → Secrets and variables → Actions), so they are never committed to the repo. For a local build, pass them as environment variables:
-
-```bash
-INPUT_API_KEY=<key> INPUT_DATA_URL=<sheet-url> python3 build.py
+```
+Google Sheets (text content) ──┐
+Google Drive (member/gallery photos) ──┼─▶ GitHub Actions: builder/ (Python) ─▶ docs/ ─▶ GitHub Pages
+assets/ in this repo (backgrounds, research images) ──┘
 ```
 
-### Create a data source document
+The [Builder workflow](.github/workflows/builder.yml) runs the Python builder in [builder](builder). The builder reads the spreadsheet through the Google Sheets API, downloads Drive photos, and renders the site into a `docs/` folder **on the runner**. That folder is deployed straight to GitHub Pages; **nothing is committed back to the repository**.
 
-The site's contents come from a Google Sheets document, whose URL is stored in the `DATA_URL` secret.
+The workflow runs:
 
-An example document is available at [here](https://docs.google.com/spreadsheets/d/1EDLlUuY2Ia5MKNbCTOftxxSxBaK3C9pRFOIUvMY30eY/edit?usp=sharing).
+- on every push to `master`,
+- when you click **Run workflow** on the [Actions page](https://github.com/SCAPLab/scaplab.github.io/actions/workflows/builder.yml), or
+- when you click **🚀 Update Site → Update site now** inside the spreadsheet (see [below](#one-click-update-button-in-the-spreadsheet)).
 
-To create your own document, follow the instructions below. 
+There is **no scheduled rebuild**. After you edit the sheet, trigger one of the above.
 
-1. Use [this link](https://docs.google.com/spreadsheets/d/1EDLlUuY2Ia5MKNbCTOftxxSxBaK3C9pRFOIUvMY30eY/copy#gid=1676718498) to make a copy of the example Sheets document. 
+## One-time setup
 
-1. Set your document's sharing settings as: *Public on the web - Anyone on the Internet can find and view*. Read [this document](https://support.google.com/docs/answer/183965?co=GENIE.Platform%3DDesktop&hl=en) if you need help.
+### 1. GitHub repository settings
 
-1. Add the document URL as the `DATA_URL` secret (Settings → Secrets and variables → Actions → New repository secret).
+1. **Settings → Pages → Build and deployment → Source → GitHub Actions.** Do *not* use "Deploy from a branch": with that setting, GitHub renders this README as the homepage instead of the built site.
+1. **Settings → Secrets and variables → Actions → New repository secret.** Add two secrets:
 
-### Get a Google API Key
-
-The builder needs a Google API key to read the Google Sheets document. Add it as the `API_KEY` secret.
-
-1. Create an API key in the [Google Cloud Console](https://console.cloud.google.com/apis/credentials) and enable the **Google Sheets API** for its project.
-1. Set **Application restrictions → None** (no HTTP referrer restriction). The builder calls the API server-side with no referrer, so a referrer-restricted key fails with `403`.
-1. Add the key as the `API_KEY` secret.
-
-## Updating the site instantly from Google Sheets
-
-There's no scheduled rebuild — the site updates when the [Builder workflow](.github/workflows/builder.yml) is triggered: by a push to *master*, from the **Run workflow** button on GitHub's Actions tab, or, for a content-only edit, with a one-click **"🚀 Update Site"** menu button added directly to the spreadsheet ([google-apps-script/update-site-button.gs](google-apps-script/update-site-button.gs)) — no need to leave the sheet or touch GitHub's UI.
-
-**Setup (one-time):**
-
-1. **Create a GitHub token**, scoped to just this repo: [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new) → *Resource owner*: the account/org that owns the repo → *Repository access*: **Only select repositories** → this repo → *Permissions*: **Actions: Read and write** (nothing else needed). Generate it and copy the token (shown once).
-1. In the Google Sheets document: **Extensions → Apps Script**, delete any placeholder code, and paste in the contents of [google-apps-script/update-site-button.gs](google-apps-script/update-site-button.gs). Save the project.
-1. In the Apps Script editor, open **Project Settings** (gear icon) → **Script Properties** → **Add script property**, and add three:
-
-    | Property | Value |
+    | Secret | Value |
     | --- | --- |
-    | `GITHUB_TOKEN` | the token from step 1 |
-    | `GITHUB_OWNER` | the GitHub account/org name (e.g. `DiaSysLab`) |
-    | `GITHUB_REPO` | the repo name (e.g. `diasyslab.github.io`) |
+    | `API_KEY` | Google API key (step 2) |
+    | `DATA_URL` | URL of the content spreadsheet (step 3) |
 
-1. Reload the spreadsheet. A new **🚀 Update Site** menu appears next to Help. The first click asks you to authorize the script (it needs permission to call an external API) — review and allow it.
+### 2. Google API key
 
-**To use it:** after editing the spreadsheet, click **🚀 Update Site → Update site now**. The site is live in a couple of minutes; check the repo's **Actions** tab for progress.
+1. Create an API key in the [Google Cloud Console](https://console.cloud.google.com/apis/credentials).
+1. Enable **both** the **Google Sheets API** and the **Google Drive API** for that project. Drive is needed for member and gallery photos.
+1. Set **Application restrictions → None**. The builder calls the API from a server with no referrer, so a referrer-restricted key fails with `403`. You can still restrict *which APIs* the key may call (Sheets + Drive).
 
-## Configuring the navigation menu
+### 3. Content spreadsheet
 
-The top navigation bar is driven by a **`Menu`** tab in the Google Sheets document (columns `Menu`, `Submenu`, `URL`, with data starting at row 2). Each row is one entry:
+1. Make a copy of the reference spreadsheet (**File → Make a copy**). This keeps every tab the builder expects, including a hidden `Members` tab.
+1. Share it as **Anyone with the link → Viewer**.
+1. Put its URL in the `DATA_URL` secret.
+1. **Clear out data inherited from other labs** before the first build:
+    - **Redirects**: every row becomes a short URL on this site (`scaplab.github.io/<path>`).
+    - **Personal**: every row is another spreadsheet that gets fetched and published at `scaplab.github.io/<path>`.
+    - **Links**, **Announcements**, **Publications**, **Research**, **Gallery**, **Members - …** tabs.
+    - **Website** tab: in particular `root_folder`, `repo_url`, `data_url`, `map_iframe_src`.
+
+> **Do not rename or delete these tabs:** `Website`, `Announcements`, `Members`, `Tags`, `Links`, `Pages`, `Redirects`, `Personal`. They are read in one request, and the build fails if any one of them is missing. They may be empty (keep the header row).
+
+### 4. Google Drive photo folder
+
+Create one Drive folder, share it as **Anyone with the link → Viewer**, and put its share link in the Website tab's `root_folder` row:
+
+```
+root/
+  member/
+    pi/<photo>.jpg
+    student/<photo>.jpg
+  gallery/
+    album1/   (photos for this album)
+    album2/
+```
+
+## Spreadsheet reference
+
+Every tab uses row 1 as a header; data starts at row 2.
+
+| Tab | Shows up as | Columns |
+| --- | --- | --- |
+| **Website** | Site-wide settings (see table below) | Description, **ID**, **Value** |
+| **Menu** | Top navigation bar | Menu, Submenu, URL |
+| **Announcements** | Home page announcements | Title, Content (Markdown), Expiration datetime (hidden after this; blank = never) |
+| **Members - &lt;slug&gt;\|&lt;Title&gt;** | `/members/<slug>` | Group, Name, Email, Image, Description, Links, Degree, Year |
+| **Members** | `/members` (combined page; may be left empty) | same as above |
+| **Research** | `/research` | Title, Image, Content (Markdown) |
+| **Publications** | `/publications`, plus "Latest Publications" on the home page | Category, Title, Authors, Booktitle, Links, Tags |
+| **Tags** | Topic filter on Publications | ID, Title, Tag, Color. Row 2 column B is a switch: `off` hides topics entirely |
+| **Gallery** | `/gallery` | Title, Folder (path under `root_folder`, e.g. `gallery/album1`), Description |
+| **Links** | `/links` | Category, Title, Full title, URL, Search query (`{{year}}` placeholder), CFP month, Event month |
+| **Pages** | Custom Markdown pages at `/<path>` | Path, Title, Content (Markdown) |
+| **Redirects** | Short URLs: `/<path>` redirects to the target | Path, Target URL |
+| **Personal** | Personal pages built from another spreadsheet | Path, Spreadsheet URL |
+
+### Website tab keys
+
+| ID | Used for |
+| --- | --- |
+| `title` | Lab name: home page hero, footer, browser tab |
+| `instruction` | Institution name. The hero reads "`title` @ `instruction`" |
+| `subtitle` | Line under the hero title |
+| `logo_text` | Text logo at the top left |
+| `address` | Footer and Contact page |
+| `map_iframe_src` | Google Maps **embed** URL on the Contact page (Maps → Share → Embed a map → the `src` value) |
+| `root_folder` | Drive folder share link for member and gallery photos |
+| `repo_url` | "Repository for this Website" link in the footer |
+| `index_background`, `members_background`, `research_background`, `links_background`, `contact_background`, `page_background`, `gallery_background` | Header background image for each page (URL, or a repo path like `/assets/images/backgrounds/main.jpg`) |
+| `analytics_id` | *(optional)* Google Analytics measurement ID, e.g. `G-XXXXXXXXXX`. Leave the row out and no analytics script is loaded |
+| `favicon` | *(optional)* Browser-tab icon URL or path. Defaults to `/assets/images/logo.svg` |
+
+Text values (`title`, `logo_text`, `subtitle`, `instruction`, `address`) support Markdown and the formatting shortcuts below.
+
+### Navigation menu
+
+Each row of the `Menu` tab is one entry. Leave **Submenu** empty for a plain link; fill it in to turn that **Menu** label into a dropdown (all rows sharing the same Menu value become its items).
 
 | Menu | Submenu | URL |
 | --- | --- | --- |
@@ -95,97 +117,86 @@ The top navigation bar is driven by a **`Menu`** tab in the Google Sheets docume
 | Members | PI | /members/pi |
 | Members | Students | /members/students |
 | Research | | /research |
+| Publications | | /publications |
+| Gallery | | /gallery |
 | Contact | | /contact |
 
-- Leave **Submenu** empty for a normal, one-level link (e.g. *Home*, *Research*).
-- Fill **Submenu** to turn that **Menu** label into a two-level dropdown; every row sharing the same **Menu** value becomes an item in that dropdown (e.g. *Members → PI / Students*).
+If there is no `Menu` tab, a default menu (Home, Members, Research, Links, Contact) is used.
 
-If there is no `Menu` tab, the site falls back to the default menu (Home, Members, Research, Links, Contact).
+### Member pages
 
-## Creating separate member pages
+- A tab named **`Members - <Name>`** is published at **`/members/<name>`** (lower-cased, spaces become hyphens).
+- To use a short URL with a longer page title, write **`Members - <slug>|<Title>`**, e.g. `Members - pi|Principal Investigator` gives `/members/pi` with the title "Principal Investigator".
+- Column A is the group heading, so one page can hold several groups (e.g. *Ph.D. Student*, *M.S. Student*).
+- **Image**: a path under the Drive root starting with `member/`, e.g. `/member/pi/photo.jpg`. A full URL or a repo path (`/assets/...`) also works and is used as-is.
 
-In addition to the combined */members* page (built from the `Members` tab), you can publish extra member pages, each managed in its own tab:
+### Research images (stored in this repo, not Drive)
 
-1. Add a tab named **`Members - <Name>`** (e.g. `Members - PI`, `Members - Students`) using the **same columns as the `Members` tab**.
-1. It is automatically published at **`/members/<name>`**, where `<name>` is lower-cased with spaces turned into hyphens (`Members - PI` → `/members/pi`).
-1. Link to it from the `Menu` tab (see above).
-1. To show a page title that differs from its URL slug (e.g. URL `/members/pi` but title "Principal Investigator"), name the tab **`Members - <slug>|<Full Title>`** (e.g. `Members - pi|Principal Investigator`). Without a `|`, the tab name is used for both, as above.
+Research topic images are read from **[assets/images/researches](assets/images/researches)** in this repo. Commit the image there, then put just the file name (e.g. `mytopic.jpg`) in the Research tab's Image column. A full URL or an `/assets/...` path also works. Images display at 16:10; a sample is at `/assets/images/research-example.svg`.
 
-Within each page, column A is still the section heading, so a single page can hold several groups (e.g. a *Students* page with *Ph.D. Student*, *M.S. Student*, … sections).
+### Publications formatting shortcuts
 
-## Gallery, member & research photos (from one Google Drive folder)
+The `Authors` and `Booktitle` cells (and the Website text keys) accept Markdown plus:
 
-The `/gallery` page, member photos (the `image` column on the `Members` / `Members - <Name>` tabs), and research photos (the `Image` column on the `Research` tab) can all pull images straight from **one shared Google Drive folder**, instead of pasting a link per photo.
+| Shortcut | Result |
+| --- | --- |
+| `[red]text[/red]` | red text |
+| `[blue]text[/blue]` | blue text |
+| `[b]text[/b]` or `**text**` | **bold** |
+| `[i]text[/i]` or `*text*` | *italic* |
+| `[u]text[/u]` | underline |
 
-**Setup:**
+The home page's "Latest Publications" shows the first 7 rows of the **first Category** in the Publications tab.
 
-1. Make a Drive folder, share it *Anyone with the link – Viewer*, and inside it create top-level subfolders as needed, e.g.:
+### Line breaks
 
-    ```
-    root/
-      member/
-        pi/pic.jpg
-        alice/pic.jpg
-      research/
-        example.svg
-      gallery/
-        album1/  (photos for this album)
-        album2/
-    ```
+- Inside a cell, press **Alt+Enter** (Gallery and Research descriptions also accept a typed `\n`).
+- A blank line starts a new paragraph.
 
-2. In the **`Website`** tab, add a `root_folder` key whose value is the **root folder's share link**. (This one root now backs the gallery, member photos, and research photos. The old key name `gallery_folder` still works, for sites that haven't renamed it yet.)
-3. **Member photo:** in the `image` column, write the path from the root folder, starting with `member/` (e.g. `member/pi/pic.jpg`). It's resolved to a Drive thumbnail at build time.
-4. **Research photo:** same idea, starting with `research/` (e.g. `research/example.svg`), in the `Research` tab's `Image` column.
-5. **Gallery album:** in a **`Gallery`** tab (from row 2), add one row per album:
+## One-click update button in the spreadsheet
 
-    | Title | Folder | Description (Markdown) |
-    | --- | --- | --- |
-    | Jeju Conference | gallery/album1 | ## We had a great time … |
-    | Workshop | gallery/album2 | |
+The script in [google-apps-script/update-site-button.gs](google-apps-script/update-site-button.gs) adds a **🚀 Update Site** menu that starts the Builder workflow.
 
-    - **Title** (A) is what's shown on the page; **Folder** (B) is the path from the root folder to the album's subfolder (a bare name like `album1` also works if it's a *direct* child of the root); **Description** (C) is optional Markdown. For line breaks in the description, press **Alt+Enter** in the cell (typing a literal `\n` also works).
-    - Every image in that subfolder becomes a slide (ordered by file name). Album order and titles are controlled by the sheet.
-    - Add an album = add a subfolder + a sheet row; add photos = drop files into the subfolder.
-    - (You can also put a full Drive folder link in column B instead of a path.)
+1. **Create a GitHub token** at [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new):
+    - *Resource owner*: `SCAPLab`
+    - *Repository access*: **Only select repositories** → `scaplab.github.io`
+    - *Permissions*: **Actions: Read and write** (nothing else)
+1. In the spreadsheet, open **Extensions → Apps Script**, replace any existing code with the contents of `update-site-button.gs`, and save.
+1. In **Project Settings → Script Properties**, add:
 
-A member/research image that doesn't start with `member/` or `research/` (a full URL, a repo asset path like `/assets/...`) is left as-is, so existing photos keep working unchanged.
-
-**Requirements:** the `API_KEY` must have the **Google Drive API** enabled (in addition to Sheets), the folders must be publicly viewable, and the page is linked from the `Menu` tab (`Gallery → /gallery`).
-
-## Research & Publications
-
-- **Publications** (`/publications`) is the paper list — built from a **`Publications`** tab (same layout the old `Research` tab used: `Category`, `Title`, `Authors`, `Booktitle`, `Links`, `Tags`).
-
-    The `Authors` and `Booktitle` cells support Markdown, plus these shortcuts for common formatting (no HTML/CSS needed):
-
-    | Shortcut | Result |
+    | Property | Value |
     | --- | --- |
-    | `[red]text[/red]` | <span style="color:#c0392b">red text</span> |
-    | `[blue]text[/blue]` | <span style="color:#2563eb">blue text</span> |
-    | `[b]text[/b]` (or `**text**`) | **bold** |
-    | `[i]text[/i]` (or `*text*`) | *italic* |
-    | `[u]text[/u]` | <u>underline</u> |
-- **Research** (`/research`) is an introduction page — built from a **`Research`** tab with one row per topic:
+    | `GITHUB_TOKEN` | the token from step 1 |
+    | `GITHUB_OWNER` | `SCAPLab` |
+    | `GITHUB_REPO` | `scaplab.github.io` |
 
-| Title | Image | Content (Markdown) |
-| --- | --- | --- |
-| Natural Language Processing | /assets/images/research-example.svg | We study … |
+1. Reload the spreadsheet and click **🚀 Update Site → Update site now**. The first click asks you to authorize the script.
 
-Each row renders as a **title + one image (16:10) + Markdown description**, repeated down the page. The image is any URL or path (a repo asset, a Drive `thumbnail?id=…` link, etc.), **or** a path starting with `research/` (e.g. `research/example.svg`) resolved from the shared Drive root folder — see [Gallery, member & research photos](#gallery-member--research-photos-from-one-google-drive-folder). A sample 16:10 image lives at `/assets/images/research-example.svg`. Link both pages from the `Menu` tab.
+Progress is visible on the repo's [Actions tab](https://github.com/SCAPLab/scaplab.github.io/actions).
 
-## About this fork
+## Static files
 
-This site started from an open-source template built by [Jeongmin Byun](https://jmbyun.github.io/), with funding and support from [JinYeong Bak](https://nosyu.github.io/) — many thanks to both for making this possible. DiaSys Lab has since customized it with Google Drive–backed photo galleries, members page, Markdown formatting shortcuts, and more, to fit our own needs.
+Anything in [assets](assets) is copied to `/assets/...` on the built site. Use it for backgrounds (`assets/images/backgrounds/`), research images, the favicon, and so on.
+
+## Building locally
+
+```bash
+pip3 install -r requirements.txt
+INPUT_API_KEY=<key> INPUT_DATA_URL=<sheet-url> python3 build.py
+```
+
+The site is written to `docs/`. Serve it with `python3 -m http.server -d docs` and open http://localhost:8000.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| --- | --- |
+| The homepage shows this README | Pages source is "Deploy from a branch". Switch it to **GitHub Actions** |
+| Build fails with `API_KEY is empty` / `DATA_URL is empty` | The repository secret is missing |
+| Build fails with HTTP `403` | API key has a referrer restriction, or the Sheets/Drive API is not enabled |
+| Build fails with HTTP `400` | One of the required tabs is missing or renamed |
+| A photo is missing; the log says `not found in Drive root folder` | Path typo, or the Drive folder isn't shared publicly |
 
 ## Acknowledgements
 
-This work was supported and funded by [JinYeong Bak](https://nosyu.github.io/). The developer of this repo is [Jeongmin Byun](https://jmbyun.github.io/).
-
-## Tips
-- How to do line breaks in markdown
-  - Two spaces at the end of the line (recommended, https://stackoverflow.com/a/33191810)
-  - One empty line between lines
-  - Reference: https://gist.github.com/shaunlebron/746476e6e7a4d698b373
-- How to update the webpage
-  - Edit the Google Sheets document (contents) or the *assets* folder (static files), then wait up to 30 minutes, **or**
-  - Go to the [Actions](https://github.com/TBDLAB1/tbdlab1.github.io/actions/workflows/builder.yml) page and click the `Run workflow` button to update immediately
+This site is based on an open-source research group website template built by [Jeongmin Byun](https://jmbyun.github.io/), with support from [JinYeong Bak](https://nosyu.github.io/). It also builds on [DiaSys Lab](https://github.com/DiaSysLab/diasyslab.github.io)'s extensions: Drive-backed galleries and member photos, per-group member pages, and formatting shortcuts. Many thanks to all of them.

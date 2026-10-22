@@ -98,6 +98,7 @@ Every tab uses row 1 as a header; data starts at row 2.
 | `subtitle` | Line under the hero title |
 | `logo_text` | Text logo at the top left |
 | `address` | Footer and Contact page |
+| `about` | *(optional)* "About" section on the home page (Markdown), shown **instead of** Latest Publications. Leave it empty to show Latest Publications. Use a blank line (Alt+Enter twice) between paragraphs |
 | `map_iframe_src` | Google Maps **embed** URL on the Contact page (Maps → Share → Embed a map → the `src` value) |
 | `root_folder` | Drive folder share link for member and gallery photos |
 | `repo_url` | "Repository for this Website" link in the footer |
@@ -105,7 +106,7 @@ Every tab uses row 1 as a header; data starts at row 2.
 | `analytics_id` | *(optional)* Google Analytics measurement ID, e.g. `G-XXXXXXXXXX`. Leave the row out and no analytics script is loaded |
 | `favicon` | *(optional)* Browser-tab icon URL or path. Defaults to `/assets/images/logo.svg` |
 
-Text values (`title`, `logo_text`, `subtitle`, `instruction`, `address`) support Markdown and the formatting shortcuts below.
+Text values (`title`, `logo_text`, `subtitle`, `instruction`, `address`, `about`) support Markdown and the formatting shortcuts below.
 
 ### Navigation menu
 
@@ -146,7 +147,7 @@ The `Authors` and `Booktitle` cells (and the Website text keys) accept Markdown 
 | `[i]text[/i]` or `*text*` | *italic* |
 | `[u]text[/u]` | underline |
 
-The home page's "Latest Publications" shows the first 7 rows of the **first Category** in the Publications tab.
+The home page's "Latest Publications" shows the first 7 rows of the **first Category** in the Publications tab (unless the Website tab's `about` is set, which replaces it).
 
 ### Line breaks
 

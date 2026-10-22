@@ -31,7 +31,20 @@
         </div>
     </div>
     {% endif %}
-    {% if landing_research %}
+    {#- The Website tab's 'about' text replaces Latest Publications; leave it
+        empty to show Latest Publications instead. -#}
+    {% if data.website.about %}
+    <div class="row">
+        <div class="container">
+            <div class="about v-padded">
+                <h3 class="row-title">About</h3>
+                <div class="about-content">
+                    {{ data.website.about | markdown }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif landing_research %}
     <div class="row">
         <div class="container">
             <div class="latest v-padded">

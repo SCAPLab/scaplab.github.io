@@ -244,7 +244,7 @@ def is_empty_row(row):
 # 'title' is also used, unfiltered, in the <title> tag (base.html); that's
 # fine since it's still the plain source string there, markup and all just
 # don't do anything in a browser tab's title.
-WEBSITE_TEXT_SHORTCUT_KEYS = {'title', 'logo_text', 'subtitle', 'instruction', 'address'}
+WEBSITE_TEXT_SHORTCUT_KEYS = {'title', 'logo_text', 'subtitle', 'instruction', 'address', 'about'}
 
 def conv_website(table):
     items = {}
@@ -255,6 +255,10 @@ def conv_website(table):
         value = row[1] if len(row) > 1 else ''
         if key in WEBSITE_TEXT_SHORTCUT_KEYS:
             value = apply_text_shortcuts(value)
+        if key == 'about':
+            # Like Gallery/Research, a literal "\n" typed in the cell also
+            # works as a line break (a blank line starts a new paragraph).
+            value = value.replace('\\n', '\n')
         items[key] = value
     return items
 

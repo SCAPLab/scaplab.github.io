@@ -384,6 +384,19 @@ body {
     color: var(--text-color);
 }
 
+.about-content {
+    max-width: 56rem;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--text-color);
+}
+.about-content p {
+    margin: 0 0 1rem 0;
+}
+.about-content p:last-child {
+    margin-bottom: 0;
+}
+
 @media screen and (max-width: 64rem) {
     .row-card-item {
         width: 100%;

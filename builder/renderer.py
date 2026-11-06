@@ -80,7 +80,7 @@ def render_publications(data):
     template = env.get_template('publications.html')
     return template.render(data=data)
 
-DEFAULT_RESEARCH_RATIO = (3, 7)
+DEFAULT_RESEARCH_RATIO = (7, 3)
 
 def parse_research_ratio(value):
     # Website tab 'research_ratio' sets the text:image column widths, written

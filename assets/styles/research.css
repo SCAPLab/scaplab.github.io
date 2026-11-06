@@ -5,7 +5,7 @@
 /* Text and images side by side; widths set inline from 'research_ratio'. */
 .research-intro-body.has-images {
     display: grid;
-    grid-template-columns: minmax(0, var(--research-left, 3fr)) minmax(0, var(--research-right, 7fr));
+    grid-template-columns: minmax(0, var(--research-left, 7fr)) minmax(0, var(--research-right, 3fr));
     gap: 2rem;
     align-items: start;
 }

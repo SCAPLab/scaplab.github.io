@@ -626,7 +626,13 @@ def conv_research_intro(table):
         images = [resolve_research_image(i) for i in re.split(r'[\n,]+', image_cell) if i.strip()]
         if not title and not images and not content.strip():
             continue
-        items.append({'title': title, 'images': images, 'content': content})
+        # A trailing "(...)" in the title is shown as a separately styled
+        # subtitle, e.g. "Efficient AI Systems (LLM Serving, RAG, ...)".
+        subtitle = ''
+        m = re.match(r'^(.*\S)\s*(\([^()]*\))\s*$', title, re.S)
+        if m:
+            title, subtitle = m.group(1), m.group(2)
+        items.append({'title': title, 'subtitle': subtitle, 'images': images, 'content': content})
     return items
 
 def load_publications(doc_id):

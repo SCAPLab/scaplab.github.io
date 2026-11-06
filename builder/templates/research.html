@@ -11,8 +11,11 @@
     <div class="row">
         <div class="container">
             <div class="research-intro-item v-padded">
-                {% if item.title %}
-                <h3 class="row-title">{{ item.title | markdown_inline }}</h3>
+                {% if item.title or item.subtitle %}
+                <h3 class="row-title research-title">
+                    <span class="research-title-main">{{ item.title | markdown_inline }}</span>
+                    {% if item.subtitle %}<span class="research-title-sub">{{ item.subtitle | markdown_inline }}</span>{% endif %}
+                </h3>
                 {% endif %}
                 {#- Text on the left, images stacked on the right; the column
                     widths come from the Website tab's 'research_ratio'. A row
@@ -21,7 +24,7 @@
                 <div class="research-intro-body{% if item.images and has_text %} has-images{% endif %}"
                      style="--research-left: {{ ratio_left }}fr; --research-right: {{ ratio_right }}fr;">
                     {% if has_text %}
-                    <div class="research-intro-content">{{ item.content | markdown }}</div>
+                    <div class="research-intro-content">{{ item.content | markdown | research_labels }}</div>
                     {% endif %}
                     {% if item.images %}
                     <div class="research-intro-images">

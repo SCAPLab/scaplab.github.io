@@ -2,6 +2,21 @@
     padding-bottom: 0.9rem;
 }
 
+/* Topic heading: main title, then the "(...)" keywords as a subtitle. */
+.research-title-main {
+    color: rgb(158, 26, 32);
+}
+.research-title-sub {
+    color: rgb(16, 16, 119);
+    font-size: 1rem;
+}
+
+/* "[Topic]" label at the start of each list item. */
+.research-label {
+    color: rgb(255, 179, 0);
+    font-weight: bold;
+}
+
 /* Text and images side by side; widths set inline from 'research_ratio'. */
 .research-intro-body.has-images {
     display: grid;
@@ -26,9 +41,11 @@
     background-color: var(--light-grey-color);
 }
 
+/* Same type scale as the Publications list (0.8rem, compact lines). */
 .research-intro-content {
     color: var(--grey-color);
-    line-height: 1.7;
+    font-size: 0.8rem;
+    line-height: 1.5;
 }
 .research-intro-content > :first-child {
     margin-top: 0;
@@ -38,7 +55,7 @@
     padding-left: 1.4rem;
 }
 .research-intro-content li {
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
 }
 
 /* Narrow screens: one column, images below the text. */

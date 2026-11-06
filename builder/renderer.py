@@ -55,6 +55,12 @@ def init_env():
 
     env.filters['jsonify'] = lambda text: json.dumps(text)
 
+    # Research page: a "[Topic]" label at the start of a list item gets its
+    # own style (e.g. "1. [Image Generation] Authors, Title, Venue").
+    list_item_label_re = re.compile(r'(<li>(?:\s*<p>)?)\s*\[([^\]<]+)\]')
+    env.filters['research_labels'] = lambda html: Markup(
+        list_item_label_re.sub(r'\1<span class="research-label">[\2]</span>', str(html)))
+
 def render_index(data):
     template = env.get_template('landing.html')
     max_size = 7

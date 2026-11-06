@@ -613,17 +613,20 @@ def load_gallery(doc_id, root_id=''):
     return albums
 
 def conv_research_intro(table):
-    # Research-introduction page: one row per topic (title, image, Markdown).
+    # Research-introduction page: one row per topic (title, images, Markdown).
+    # The Image cell may list several images, one per line (Alt+Enter) or
+    # comma-separated; they're stacked beside the text.
     items = []
     for row in table:
         if not row:
             continue
         title = (row[0] if len(row) > 0 else '').strip()
-        image = (row[1] if len(row) > 1 else '').strip()
+        image_cell = (row[1] if len(row) > 1 else '').replace('\\n', '\n')
         content = (row[2] if len(row) > 2 else '').replace('\\n', '\n')
-        if not title and not image and not content.strip():
+        images = [resolve_research_image(i) for i in re.split(r'[\n,]+', image_cell) if i.strip()]
+        if not title and not images and not content.strip():
             continue
-        items.append({'title': title, 'image': resolve_research_image(image), 'content': content})
+        items.append({'title': title, 'images': images, 'content': content})
     return items
 
 def load_publications(doc_id):

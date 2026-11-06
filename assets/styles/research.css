@@ -1,18 +1,50 @@
 .research-intro-item .row-title {
     padding-bottom: 0.9rem;
 }
+
+/* Text and images side by side; widths set inline from 'research_ratio'. */
+.research-intro-body.has-images {
+    display: grid;
+    grid-template-columns: minmax(0, var(--research-left, 3fr)) minmax(0, var(--research-right, 7fr));
+    gap: 2rem;
+    align-items: start;
+}
+
+.research-intro-images {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+.research-intro-images a {
+    display: block;
+}
 .research-intro-image {
     display: block;
     width: 100%;
     height: auto;
     border-radius: 6px;
-    margin: 0 0 1.25rem 0;
     background-color: var(--light-grey-color);
 }
+
 .research-intro-content {
     color: var(--grey-color);
     line-height: 1.7;
 }
 .research-intro-content > :first-child {
     margin-top: 0;
+}
+.research-intro-content ol,
+.research-intro-content ul {
+    padding-left: 1.4rem;
+}
+.research-intro-content li {
+    margin-bottom: 0.6rem;
+}
+
+/* Narrow screens: one column, images below the text. */
+@media screen and (max-width: 64rem) {
+    .research-intro-body.has-images {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+    }
 }

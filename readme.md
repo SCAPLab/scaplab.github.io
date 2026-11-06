@@ -80,7 +80,7 @@ Every tab uses row 1 as a header; data starts at row 2.
 | **Announcements** | Home page announcements | Title, Content (Markdown), Expiration datetime (hidden after this; blank = never) |
 | **Members - &lt;slug&gt;\|&lt;Title&gt;** | `/members/<slug>` | Group, Name, Email, Image, Description, Links, Degree, Year |
 | **Members** | `/members` (combined page; may be left empty) | same as above |
-| **Research** | `/research` | Title, Image, Content (Markdown) |
+| **Research** | `/research` | Title, Image(s), Content (Markdown) |
 | **Publications** | `/publications`, plus "Latest Publications" on the home page | Category, Title, Authors, Booktitle, Links, Tags |
 | **Tags** | Topic filter on Publications | ID, Title, Tag, Color. Row 2 column B is a switch: `off` hides topics entirely |
 | **Gallery** | `/gallery` | Title, Folder (path under `root_folder`, e.g. `gallery/album1`), Description |
@@ -105,6 +105,7 @@ Every tab uses row 1 as a header; data starts at row 2.
 | `index_background`, `members_background`, `research_background`, `links_background`, `contact_background`, `page_background`, `gallery_background` | Header background image for each page (URL, or a repo path like `/assets/images/backgrounds/main.jpg`) |
 | `analytics_id` | *(optional)* Google Analytics measurement ID, e.g. `G-XXXXXXXXXX`. Leave the row out and no analytics script is loaded |
 | `favicon` | *(optional)* Browser-tab icon URL or path. Defaults to `/assets/images/logo.svg` |
+| `research_ratio` | *(optional)* Research page column widths as `text:images`, e.g. `3:7` (default) or `7:3` |
 
 Text values (`title`, `logo_text`, `subtitle`, `instruction`, `address`, `about`) support Markdown and the formatting shortcuts below.
 
@@ -131,9 +132,19 @@ If there is no `Menu` tab, a default menu (Home, Members, Research, Links, Conta
 - Column A is the group heading, so one page can hold several groups (e.g. *Ph.D. Student*, *M.S. Student*).
 - **Image**: a path under the Drive root starting with `member/`, e.g. `/member/pi/photo.jpg`. A full URL or a repo path (`/assets/...`) also works and is used as-is.
 
-### Research images (stored in this repo, not Drive)
+### Research page
 
-Research topic images are read from **[assets/images/researches](assets/images/researches)** in this repo. Commit the image there, then put just the file name (e.g. `mytopic.jpg`) in the Research tab's Image column. A full URL or an `/assets/...` path also works. Images display at 16:10; a sample is at `/assets/images/research-example.svg`.
+Each row of the **Research** tab is one topic: the **Title** spans the full width, then the **Content** (Markdown, e.g. a numbered list) sits on the left and the **images** are stacked on the right. The column widths follow the Website tab's `research_ratio` (default `3:7`, text:images). On phones the images move below the text. A row with only text, or only images, uses the full width.
+
+Research images are read from **[assets/images/researches](assets/images/researches)** in this repo (not Drive). Commit the image there, then put just the file name in the Image column. For several images, put **one per line** (Alt+Enter in the cell) or separate them with commas:
+
+```
+streamrag.jpg
+call.jpg
+ditto.jpg
+```
+
+A full URL or an `/assets/...` path also works. Clicking an image opens it full size. Keep image files reasonably small (around 2000px wide is plenty); very large files make the page slow to load.
 
 ### Publications formatting shortcuts
 

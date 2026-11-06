@@ -14,12 +14,25 @@
                 {% if item.title %}
                 <h3 class="row-title">{{ item.title | markdown_inline }}</h3>
                 {% endif %}
-                {% if item.image %}
-                <img class="research-intro-image" src="{{ item.image }}" alt="{{ item.title }}" loading="lazy">
-                {% endif %}
-                {% if item.content and item.content.strip() %}
-                <div class="research-intro-content">{{ item.content | markdown }}</div>
-                {% endif %}
+                {#- Text on the left, images stacked on the right; the column
+                    widths come from the Website tab's 'research_ratio'. A row
+                    with only text or only images uses the full width. -#}
+                {% set has_text = item.content and item.content.strip() %}
+                <div class="research-intro-body{% if item.images and has_text %} has-images{% endif %}"
+                     style="--research-left: {{ ratio_left }}fr; --research-right: {{ ratio_right }}fr;">
+                    {% if has_text %}
+                    <div class="research-intro-content">{{ item.content | markdown }}</div>
+                    {% endif %}
+                    {% if item.images %}
+                    <div class="research-intro-images">
+                        {% for image in item.images %}
+                        <a href="{{ image }}" target="_blank" rel="noopener noreferrer">
+                            <img class="research-intro-image" src="{{ image }}" alt="{{ item.title | striptags }} figure {{ loop.index }}" loading="lazy">
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

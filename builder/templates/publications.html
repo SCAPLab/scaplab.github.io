@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
-<script src="/assets/scripts/vue.min.js"></script>
-<script src="/assets/scripts/vue-markdown.js"></script>
+<script src="/assets/scripts/vue.min.js?v={{ asset_version }}"></script>
+<script src="/assets/scripts/vue-markdown.js?v={{ asset_version }}"></script>
 <script>
     Vue.use(VueMarkdown);
 </script>

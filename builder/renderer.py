@@ -55,6 +55,11 @@ def init_env():
 
     env.filters['jsonify'] = lambda text: json.dumps(text)
 
+    # Appended to local CSS/JS URLs (e.g. index.css?v=20261106110415) so each
+    # deploy gets fresh URLs. GitHub Pages lets browsers cache these files for
+    # 10 minutes, so without it a visitor can get new HTML with old CSS.
+    env.globals['asset_version'] = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+
     # Research page: a "[Topic]" label at the start of a list item gets its
     # own style (e.g. "1. [Image Generation] Authors, Title, Venue").
     list_item_label_re = re.compile(r'(<li>(?:\s*<p>)?)\s*\[([^\]<]+)\]')

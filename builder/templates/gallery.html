@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-<link rel="stylesheet" href="/assets/styles/gallery.css">
+<link rel="stylesheet" href="/assets/styles/gallery.css?v={{ asset_version }}">
 {% endblock %}
 {% block main %}
 <div class="gallery">
@@ -38,5 +38,5 @@
     </div>
     {% endfor %}
 </div>
-<script src="/assets/scripts/gallery.js"></script>
+<script src="/assets/scripts/gallery.js?v={{ asset_version }}"></script>
 {% endblock %}

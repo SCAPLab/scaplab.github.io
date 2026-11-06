@@ -105,7 +105,6 @@ Every tab uses row 1 as a header; data starts at row 2.
 | `index_background`, `members_background`, `research_background`, `links_background`, `contact_background`, `page_background`, `gallery_background` | Header background image for each page (URL, or a repo path like `/assets/images/backgrounds/main.jpg`) |
 | `analytics_id` | *(optional)* Google Analytics measurement ID, e.g. `G-XXXXXXXXXX`. Leave the row out and no analytics script is loaded |
 | `favicon` | *(optional)* Browser-tab icon URL or path. Defaults to `/assets/images/logo.svg` |
-| `research_ratio` | *(optional)* Research page column widths as `text:images`, e.g. `7:3` (default) or `3:7` |
 
 Text values (`title`, `logo_text`, `subtitle`, `instruction`, `address`, `about`) support Markdown and the formatting shortcuts below.
 
@@ -134,7 +133,7 @@ If there is no `Menu` tab, a default menu (Home, Members, Research, Links, Conta
 
 ### Research page
 
-Each row of the **Research** tab is one topic: the **Title** spans the full width, then the **Content** (Markdown, e.g. a numbered list) sits on the left and the **images** are stacked on the right. The column widths follow the Website tab's `research_ratio` (default `7:3`, text:images). On phones the images move below the text. A row with only text, or only images, uses the full width.
+Each row of the **Research** tab is one topic. The **Title** is the heading; a trailing `(...)` in it is shown as a smaller, differently colored subtitle. The **Content** (Markdown, e.g. a numbered list) spans the full width, and a `[Topic]` label at the start of a list item is highlighted. The **images** go below the text in a 2-column grid (one column on phones, or when there's only one image); each figure is scaled to fit its cell without cropping.
 
 Research images are read from **[assets/images/researches](assets/images/researches)** in this repo (not Drive). Commit the image there, then put just the file name in the Image column. For several images, put **one per line** (Alt+Enter in the cell) or separate them with commas:
 
@@ -144,7 +143,7 @@ call.jpg
 ditto.jpg
 ```
 
-A full URL or an `/assets/...` path also works. Clicking an image opens it full size. Keep image files reasonably small (around 2000px wide is plenty); very large files make the page slow to load.
+A full URL or an `/assets/...` path also works. Images appear in the order listed. Clicking an image opens it full size. Keep image files reasonably small (around 2000px wide is plenty); very large files make the page slow to load.
 
 ### Publications formatting shortcuts
 

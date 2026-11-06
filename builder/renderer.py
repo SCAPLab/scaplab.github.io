@@ -86,21 +86,9 @@ def render_publications(data):
     template = env.get_template('publications.html')
     return template.render(data=data)
 
-DEFAULT_RESEARCH_RATIO = (7, 3)
-
-def parse_research_ratio(value):
-    # Website tab 'research_ratio' sets the text:image column widths, written
-    # as "left:right" (e.g. "3:7" or "7:3"). Anything unparsable falls back
-    # to the default.
-    m = re.match(r'^\s*(\d+(?:\.\d+)?)\s*[:/]\s*(\d+(?:\.\d+)?)\s*$', value or '')
-    if not m or float(m.group(1)) <= 0 or float(m.group(2)) <= 0:
-        return DEFAULT_RESEARCH_RATIO
-    return (m.group(1), m.group(2))
-
 def render_research(data):
     template = env.get_template('research.html')
-    left, right = parse_research_ratio(data['website'].get('research_ratio'))
-    return template.render(data=data, ratio_left=left, ratio_right=right)
+    return template.render(data=data)
 
 def render_links(data):
     template = env.get_template('links.html')

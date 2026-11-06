@@ -17,25 +17,20 @@
                     {% if item.subtitle %}<span class="research-title-sub">{{ item.subtitle | markdown_inline }}</span>{% endif %}
                 </h3>
                 {% endif %}
-                {#- Text on the left, images stacked on the right; the column
-                    widths come from the Website tab's 'research_ratio'. A row
-                    with only text or only images uses the full width. -#}
-                {% set has_text = item.content and item.content.strip() %}
-                <div class="research-intro-body{% if item.images and has_text %} has-images{% endif %}"
-                     style="--research-left: {{ ratio_left }}fr; --research-right: {{ ratio_right }}fr;">
-                    {% if has_text %}
-                    <div class="research-intro-content">{{ item.content | markdown | research_labels }}</div>
-                    {% endif %}
-                    {% if item.images %}
-                    <div class="research-intro-images">
-                        {% for image in item.images %}
-                        <a href="{{ image }}" target="_blank" rel="noopener noreferrer">
-                            <img class="research-intro-image" src="{{ image }}" alt="{{ item.title | striptags }} figure {{ loop.index }}" loading="lazy">
-                        </a>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                {% if item.content and item.content.strip() %}
+                <div class="research-intro-content">{{ item.content | markdown | research_labels }}</div>
+                {% endif %}
+                {#- Images in a two-column grid below the text (one column on
+                    phones, or when there's only one image). -#}
+                {% if item.images %}
+                <div class="research-intro-images{% if item.images | length == 1 %} single{% endif %}">
+                    {% for image in item.images %}
+                    <a class="research-intro-figure" href="{{ image }}" target="_blank" rel="noopener noreferrer">
+                        <img class="research-intro-image" src="{{ image }}" alt="{{ item.title | striptags }} figure {{ loop.index }}" loading="lazy">
+                    </a>
+                    {% endfor %}
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -17,30 +17,6 @@
     font-weight: bold;
 }
 
-/* Text and images side by side; widths set inline from 'research_ratio'. */
-.research-intro-body.has-images {
-    display: grid;
-    grid-template-columns: minmax(0, var(--research-left, 7fr)) minmax(0, var(--research-right, 3fr));
-    gap: 2rem;
-    align-items: start;
-}
-
-.research-intro-images {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-.research-intro-images a {
-    display: block;
-}
-.research-intro-image {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 6px;
-    background-color: var(--light-grey-color);
-}
-
 /* Same type scale as the Publications list (0.8rem, compact lines). */
 .research-intro-content {
     color: var(--grey-color);
@@ -50,6 +26,9 @@
 .research-intro-content > :first-child {
     margin-top: 0;
 }
+.research-intro-content > :last-child {
+    margin-bottom: 0;
+}
 .research-intro-content ol,
 .research-intro-content ul {
     padding-left: 1.4rem;
@@ -58,10 +37,42 @@
     margin-bottom: 0.5rem;
 }
 
-/* Narrow screens: one column, images below the text. */
-@media screen and (max-width: 64rem) {
-    .research-intro-body.has-images {
+/* Figures below the text in a 2-column grid. Every cell is the same size and
+   each figure is scaled to fit inside it uncropped, so figures with very
+   different shapes still line up. */
+.research-intro-images {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 2rem;
+    margin-top: 1.75rem;
+}
+.research-intro-images.single {
+    grid-template-columns: minmax(0, 1fr);
+}
+.research-intro-figure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+}
+.research-intro-images.single .research-intro-figure {
+    aspect-ratio: auto;
+}
+.research-intro-image {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Phones: one figure per row, at its natural shape. */
+@media screen and (max-width: 48rem) {
+    .research-intro-images {
         grid-template-columns: minmax(0, 1fr);
-        gap: 1.25rem;
+    }
+    .research-intro-figure {
+        aspect-ratio: auto;
     }
 }
